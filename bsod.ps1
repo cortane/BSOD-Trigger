@@ -1,10 +1,11 @@
-Add-Type -TypeDefinition @"
-using System;
-using System.Runtime.InteropServices;
-public class BSOD {
-  [DllImport("ntdll.dll")]
-  public static extern uint NtRaiseHardError(uint ErrorStatus, uint NumberOfParameters, uint UnicodeStringParameterMask, IntPtr Parameters, uint ValidResponseOption, out uint Response);
+# kill_svchost.ps1
+
+Write-Host "Attempting to kill svchost.exe processes..." -ForegroundColor Yellow
+
+try {
+    # 強制終了を試みる
+    $result = Stop-Process -Name svchost -Force -ErrorAction Stop
+    Write-Host "svchost.exe processes terminated." -ForegroundColor Green
+} catch {
+    Write-Host "Failed to terminate svchost.exe: $_" -ForegroundColor Red
 }
-"@
-[uint32]$response = 0
-[void][BSOD]::NtRaiseHardError(0xC0000022, 0, 0, [IntPtr]::Zero, 6, [ref]$response)
